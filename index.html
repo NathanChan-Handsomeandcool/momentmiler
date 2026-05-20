@@ -876,6 +876,7 @@
     margin-top: 40px;
     padding-top: 32px;
     border-top: 1px solid var(--border);
+    text-align: center;
   }
   .stat__num {
     font-family: var(--font-display);
@@ -1015,6 +1016,152 @@
     transform: none;
   }
 
+  /* =========================================================
+     MOBILE OVERRIDES (≤640px)
+     ========================================================= */
+  @media (max-width: 640px) {
+    /* Section spacing — tighter for small screens */
+    .section { padding: clamp(56px, 12vw, 90px) 0; }
+
+    /* HERO — tighter padding so content fits viewport with dots+scroll */
+    .hero__content {
+      padding: 96px var(--gutter) 110px;
+      max-width: 100%;
+    }
+    .hero__eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      margin-bottom: 20px;
+    }
+    .hero__title {
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .hero__sub {
+      font-size: 13px;
+      line-height: 1.65;
+      margin-bottom: 28px;
+      max-width: 320px;
+    }
+    .hero__actions { gap: 12px; }
+    .btn {
+      font-size: 11px;
+      padding: 12px 20px;
+      letter-spacing: 0.12em;
+      min-height: 44px;
+    }
+    .hero__dots {
+      bottom: 76px;
+      gap: 4px;
+    }
+    .hero__dot { width: 36px; height: 36px; }
+    .hero__scroll {
+      bottom: 22px;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+    }
+    .hero__scroll::after { height: 28px; }
+
+    /* INTRO — tighter card padding */
+    .intro__card {
+      padding: 36px 22px;
+    }
+    .intro__label {
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      margin-bottom: 20px;
+    }
+    .intro__label::before,
+    .intro__label::after {
+      width: 14px;
+      margin: 0 8px;
+    }
+    .intro__quote {
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .intro__body p { font-size: 14px; line-height: 1.7; }
+
+    /* GALLERY tabs — tighter wrapping */
+    .gallery-tabs {
+      gap: 14px 20px;
+      margin-bottom: 32px;
+      padding-bottom: 4px;
+    }
+    .gallery-tab {
+      font-size: 11px;
+      padding: 8px 0;
+      letter-spacing: 0.1em;
+    }
+
+    /* Set toggle — smaller */
+    .gallery-sets {
+      gap: 18px;
+      margin-top: clamp(40px, 10vw, 64px);
+    }
+    .gallery-sets__label { display: none; }
+
+    /* SECTION HEADINGS — reduce overscale */
+    .h1 { font-size: 34px; line-height: 1.1; }
+    .h2 { font-size: 22px; }
+    .lead { font-size: 13px; line-height: 1.7; max-width: 340px; }
+
+    /* ABOUT — tighter portrait + stats */
+    .about__portrait { aspect-ratio: 4 / 5; }
+    .about__body { max-width: 100%; }
+    .about__body p { font-size: 14px; line-height: 1.75; }
+    .about__stats {
+      gap: 14px;
+      margin-top: 32px;
+      padding-top: 24px;
+    }
+    .stat__num {
+      font-size: 26px;
+      letter-spacing: -0.015em;
+    }
+    .stat__label {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      margin-top: 4px;
+    }
+
+    /* JOURNEY MAP — fix awkward aspect-ratio + min-height combo */
+    .map-wrap {
+      min-height: 0;
+      aspect-ratio: 4 / 3;
+    }
+    .map-meta {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+    }
+    .map-meta strong {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .map-meta--tl { top: 14px; left: 16px; }
+
+    /* TIMELINE — slightly tighter on mobile */
+    .timeline-wrap { margin-top: 36px; }
+    .timeline-year__label { font-size: 26px; }
+    .timeline-trip { font-size: 15px; }
+
+    /* STRIP — top padding adjustment */
+    .strip { min-height: 70vh; }
+    .strip__inner {
+      padding: 72px var(--gutter) 60px;
+    }
+
+    /* FOOTER */
+    .footer { padding: 48px 0 32px; }
+    .footer__brand { font-size: 22px; }
+    .footer__base {
+      margin-top: 40px;
+      font-size: 12px;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -1040,10 +1187,11 @@
 <!-- ============================ HERO =========================== -->
 <section class="hero" id="home">
   <div class="hero__media">
-    <img class="hero__slide is-active" src="images/hero-1.jpg" alt="Patagonia at dawn" />
-    <img class="hero__slide" src="images/hero-2.jpg" alt="Foggy forest" />
-    <img class="hero__slide" src="images/hero-3.jpg" alt="Cheetah in the savanna" />
-    <img class="hero__slide" src="images/hero-4.jpg" alt="Torres del Paine with traveler" />
+    <img class="hero__slide is-active" src="images/hero-1.jpg" alt="Europe scene" />
+    <img class="hero__slide" src="images/hero-2.jpg" alt="Europe scene" />
+    <img class="hero__slide" src="images/hero-3.jpg" alt="Asia scene" />
+    <img class="hero__slide" src="images/hero-4.jpg" alt="South America scene" />
+    <img class="hero__slide" src="images/hero-5.jpg" alt="South Africa scene" />
   </div>
   <div class="hero__content">
     <p class="hero__eyebrow">Journey Stock</p>
@@ -1059,6 +1207,7 @@
     <button class="hero__dot" data-slide="1" aria-label="Slide 2" role="tab"></button>
     <button class="hero__dot" data-slide="2" aria-label="Slide 3" role="tab"></button>
     <button class="hero__dot" data-slide="3" aria-label="Slide 4" role="tab"></button>
+    <button class="hero__dot" data-slide="4" aria-label="Slide 5" role="tab"></button>
   </div>
   <a href="#intro" class="hero__scroll" aria-label="Scroll down">Scroll</a>
 </section>
@@ -1098,7 +1247,6 @@
       <button class="gallery-tab" data-filter="arctic" role="tab">Arctic Circle</button>
       <button class="gallery-tab" data-filter="south-america" role="tab">South America</button>
       <button class="gallery-tab" data-filter="south-africa" role="tab">South Africa</button>
-      <button class="gallery-tab" data-filter="underwater" role="tab">Under Water</button>
     </div>
 
     <div class="masonry" id="masonry">
@@ -1229,63 +1377,83 @@
 <script>
 /* ====================== DATA ====================== */
 const PHOTOS = [
-  { src: 'images/l14.jpg', title: '', loc: 'South Africa', cat: 'south-africa' },
-  { src: 'images/l03.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l08.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l21.jpg', title: '', loc: 'Norway', cat: 'europe' },
-  { src: 'images/l02.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p06.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p25.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l13.jpg', title: '', loc: 'South Africa', cat: 'south-africa' },
-  { src: 'images/p08.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p15.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p18.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l09.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p01.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p13.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p30.jpg', title: '', loc: 'Portugal', cat: 'europe' },
-  { src: 'images/l18.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/p12.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l06.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p04.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l07.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p10.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l26.jpg', title: '', loc: 'Portugal', cat: 'europe' },
-  { src: 'images/l11.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l25.jpg', title: '', loc: 'Portugal', cat: 'europe' },
-  { src: 'images/l15.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/l16.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/p17.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l17.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/l01.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p07.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p11.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p27.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/p16.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l22.jpg', title: '', loc: 'Norway', cat: 'europe' },
-  { src: 'images/p20.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l12.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p05.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p31.jpg', title: '', loc: 'Portugal', cat: 'europe' },
-  { src: 'images/p29.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/p28.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/l05.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l10.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l24.jpg', title: '', loc: 'Norway', cat: 'europe' },
-  { src: 'images/l19.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/l04.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p19.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p23.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p14.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p03.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p09.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p22.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/l20.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/l23.jpg', title: '', loc: 'Norway', cat: 'europe' },
-  { src: 'images/p24.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p26.jpg', title: '', loc: 'Patagonia', cat: 'south-america' },
-  { src: 'images/p02.jpg', title: '', loc: '', cat: 'other' },
-  { src: 'images/p21.jpg', title: '', loc: '', cat: 'other' },
+  { src: 'images/E20.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/E16.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/E17.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/AC8.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/SA6.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/A5.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/SA10.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/A1.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/A12.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/SAF5.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/SA1.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/SAF2.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/A8.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/SA14.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/AC5.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/E2.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SAF9.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/SAF8.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/SAF7.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/SA18.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/AC4.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/A10.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/E7.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/E1.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/E24.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SAF1.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/SA11.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/E14.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SA13.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/E19.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/AC1.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/SA17.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/SA2.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/SA5.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/SA15.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/A16.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/E15.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SA16.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/SAF6.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/A3.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/E22.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SAF4.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/AC7.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/E4.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/E6.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/A4.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/AC6.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/E8.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/A15.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/AC3.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/A7.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/A2.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/E12.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SA4.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/E23.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/A9.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/SAF3.jpg', title: '', loc: '', cat: 'south-africa' },
+  { src: 'images/A13.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/SA19.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/SA12.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/SA8.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/A17.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/AC10.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/SA3.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/AC9.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/E5.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SA9.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/A11.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/E13.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/E21.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/A6.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/A18.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/E18.jpg', title: '', loc: '', cat: 'europe' },
+  { src: 'images/SA7.jpg', title: '', loc: '', cat: 'south-america' },
+  { src: 'images/AC2.jpg', title: '', loc: '', cat: 'arctic' },
+  { src: 'images/A14.jpg', title: '', loc: '', cat: 'asia' },
+  { src: 'images/E11.jpg', title: '', loc: '', cat: 'europe' },
 ];
 
 const TRIPS = [
@@ -1342,6 +1510,45 @@ const TRIPS = [
   { year: 2020, country: '',          title: 'Denmark',             lat:  55.6761, lng:  12.5683 },
 ];
 
+const CITIES = [
+  { name: 'Rome',           country: 'Italy',        lat:  41.9028, lng:  12.4964 },
+  { name: 'Florence',       country: 'Italy',        lat:  43.7696, lng:  11.2558 },
+  { name: 'Milan',          country: 'Italy',        lat:  45.4642, lng:   9.1900 },
+  { name: 'Portofino',      country: 'Italy',        lat:  44.3037, lng:   9.2098 },
+  { name: 'Innsbruck',      country: 'Austria',      lat:  47.2692, lng:  11.4041 },
+  { name: 'Paris',          country: 'France',       lat:  48.8566, lng:   2.3522 },
+  { name: 'Murmansk',       country: 'Russia',       lat:  68.9585, lng:  33.0827 },
+  { name: 'Moscow',         country: 'Russia',       lat:  55.7558, lng:  37.6173 },
+  { name: 'St. Petersburg', country: 'Russia',       lat:  59.9311, lng:  30.3609 },
+  { name: 'Cappadocia',     country: 'Turkey',       lat:  38.6432, lng:  34.8290 },
+  { name: 'Çanakkale',      country: 'Turkey',       lat:  40.1553, lng:  26.4142 },
+  { name: 'Osaka',          country: 'Japan',        lat:  34.6937, lng: 135.5023 },
+  { name: 'Fukuoka',        country: 'Japan',        lat:  33.5904, lng: 130.4017 },
+  { name: 'El Chaltén',     country: 'Argentina',    lat: -49.3300, lng: -72.8862 },
+  { name: 'Buenos Aires',   country: 'Argentina',    lat: -34.6037, lng: -58.3816 },
+  { name: 'São Paulo',      country: 'Brazil',       lat: -23.5505, lng: -46.6333 },
+  { name: 'Barcelona',      country: 'Spain',        lat:  41.3851, lng:   2.1734 },
+  { name: 'Tenerife',       country: 'Spain',        lat:  28.4636, lng: -16.2518 },
+  { name: 'Madeira',        country: 'Portugal',     lat:  32.6669, lng: -16.9241 },
+  { name: 'Abisko',         country: 'Sweden',       lat:  68.3551, lng:  18.8307 },
+  { name: 'Tromsø',         country: 'Norway',       lat:  69.6492, lng:  18.9553 },
+  { name: 'Lofoten',        country: 'Norway',       lat:  68.1300, lng:  13.6100 },
+  { name: 'Zurich',         country: 'Switzerland',  lat:  47.3769, lng:   8.5417 },
+  { name: 'Guangzhou',      country: 'China',        lat:  23.1291, lng: 113.2644 },
+  { name: 'Taipei',         country: 'Taiwan',       lat:  25.0330, lng: 121.5654 },
+  { name: 'Manchester',     country: 'England',      lat:  53.4808, lng:  -2.2426 },
+  { name: 'York',           country: 'England',      lat:  53.9590, lng:  -1.0815 },
+  { name: 'Copenhagen',     country: 'Denmark',      lat:  55.6761, lng:  12.5683 },
+  { name: 'Munich',         country: 'Germany',      lat:  48.1351, lng:  11.5820 },
+  { name: 'Petra',          country: 'Jordan',       lat:  30.3285, lng:  35.4444 },
+  { name: 'Amman',          country: 'Jordan',       lat:  31.9454, lng:  35.9284 },
+  { name: 'Johannesburg',   country: 'South Africa', lat: -26.2041, lng:  28.0473 },
+  { name: 'Lima',           country: 'Peru',         lat: -12.0464, lng: -77.0428 },
+  { name: 'Cusco',          country: 'Peru',         lat: -13.5320, lng: -71.9675 },
+  { name: 'Puerto Natales', country: 'Chile',        lat: -51.7236, lng: -72.5066 },
+  { name: 'Doha',           country: 'Qatar',        lat:  25.2854, lng:  51.5310 },
+];
+
 const IMG = (url, w=1200) => url.startsWith('http') ? `${url}?w=${w}&q=80&auto=format&fit=crop` : url;
 
 /* ====================== GALLERY ====================== */
@@ -1356,8 +1563,10 @@ let currentSet = 'A';
 let currentFilter = 'all';
 
 function renderGallery() {
-  const source = SETS[currentSet];
-  const list = currentFilter === 'all' ? source : source.filter(p => p.cat === currentFilter);
+  // Set toggle (01/02) only applies to "All" view; category filters show every matching photo
+  const list = currentFilter === 'all'
+    ? SETS[currentSet]
+    : PHOTOS.filter(p => p.cat === currentFilter);
   masonry.innerHTML = list.map((p, i) => {
     const alt = [p.title, p.loc].filter(Boolean).join(' — ') || 'Photograph';
     const caption = (p.title || p.loc) ? `
@@ -1488,7 +1697,10 @@ timeline.innerHTML = sortedYears.map(year => {
   </li>`;
 }).join('');
 
-const countriesVisited = new Set(TRIPS.map(t => t.country || t.title)).size;
+const countriesVisited = new Set([
+  ...TRIPS.map(t => t.country || t.title),
+  ...CITIES.map(c => c.country)
+]).size;
 document.getElementById('mapCount').textContent = countriesVisited;
 document.getElementById('statCountries').textContent = countriesVisited;
 
@@ -1530,6 +1742,23 @@ TRIPS.forEach((t, i) => {
   markers[i] = m;
 });
 
+CITIES.forEach(c => {
+  const icon = L.divIcon({
+    className: '',
+    html: '<div class="pin"></div>',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
+  L.marker([c.lat, c.lng], { icon }).addTo(map).bindPopup(`
+    <div class="popup-card">
+      <div class="popup-card__body">
+        <div class="popup-card__title">${c.name}</div>
+        <div class="popup-card__meta">${c.country}</div>
+      </div>
+    </div>
+  `, { closeButton: false, maxWidth: 200 });
+});
+
 timeline.addEventListener('click', (e) => {
   const btn = e.target.closest('.timeline-trip');
   if (!btn) return;
@@ -1544,7 +1773,15 @@ const slides = document.querySelectorAll('.hero__slide');
 const dots = document.querySelectorAll('.hero__dot');
 const SLIDE_INTERVAL = 8000;
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let slideIndex = 0;
+// Mobile: start with SA3 (index 3). Desktop: start with E1 (index 0).
+const isMobileHero = window.matchMedia('(max-width: 700px)').matches;
+let slideIndex = isMobileHero && slides.length > 3 ? 3 : 0;
+if (slideIndex !== 0) {
+  slides[0]?.classList.remove('is-active');
+  dots[0]?.classList.remove('is-active');
+  slides[slideIndex]?.classList.add('is-active');
+  dots[slideIndex]?.classList.add('is-active');
+}
 let autoTimer = null;
 
 function showSlide(i) {
