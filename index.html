@@ -603,24 +603,31 @@
   }
 
   .masonry {
-    column-count: 1;
-    column-gap: 16px;
+    --masonry-gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: var(--masonry-gap);
+    row-gap: 0;
+    grid-auto-rows: minmax(0, 1px);
+    grid-auto-flow: dense;
   }
-  @media (min-width: 640px) { .masonry { column-count: 2; column-gap: 20px; } }
-  @media (min-width: 1024px) { .masonry { column-count: 3; column-gap: 24px; } }
+  @media (min-width: 640px)  { .masonry { --masonry-gap: 14px; grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .masonry { --masonry-gap: 16px; grid-template-columns: repeat(3, 1fr); } }
 
   .photo {
     position: relative;
-    break-inside: avoid;
-    margin-bottom: 24px;
     overflow: hidden;
-    background: var(--border);
+    background: transparent;
     cursor: zoom-in;
     display: block;
+    padding-bottom: var(--masonry-gap);
+    box-sizing: border-box;
+    /* height and grid-row-end span set by JS once the image's height is known */
   }
   .photo img {
     width: 100%;
     height: auto;
+    display: block;
     transition: transform 800ms cubic-bezier(.2,.7,.2,1), filter var(--t-med);
     will-change: transform;
   }
@@ -1330,7 +1337,7 @@
       <div class="intro__body">
         <p>This is a personal archive of journeys, places, and moments that quietly stayed with me.</p>
         <p>Every photograph here captures something fleeting yet priceless — a light, a feeling, a passing moment I never wanted to forget.</p>
-        <p class="intro__signature">— Netiwat Chanprasit</p>
+        <p class="intro__signature">— Netiwat C.</p>
       </div>
     </div>
   </div>
@@ -1388,10 +1395,14 @@
       </div>
       <div class="about__body">
         <span class="eyebrow">About</span>
-        <h2 class="h1" style="margin: 12px 0 28px;">A traveler with <em>a camera</em>.</h2>
-        <p>Hi — I'm a landscape photographer based somewhere between sea level and altitude. I spend most of the year planning small trips, learning to read weather, and waiting for light that often doesn't come.</p>
-        <p>What you'll find here are the ones that did. Iceland's quiet south coast, the soft greens of Hokkaido, the granite cathedrals of Patagonia — places that asked me to be patient, and rewarded me anyway.</p>
-        <p>I shoot mostly with a mirrorless body and a small bag of primes. Most images here are made within a few minutes of either sunrise or sunset, often alone, almost always on foot.</p>
+        <h2 class="h1" style="margin: 12px 0 28px;">A Collector of <em>Moments</em></h2>
+        <p>Hi — I&rsquo;m someone who loves to travel and embrace whatever experiences the world leads me to.</p>
+        <p>Most of my time is spent planning small trips, learning about different places, and quietly collecting moments along the way.</p>
+        <p>What you&rsquo;ll find here are real moments. Some ordinary, some priceless — but all meaningful to me.</p>
+        <p>Not every photograph is perfect, but every image holds a feeling that brings me back to a memory I never want to lose.</p>
+        <p>The places I&rsquo;ve been, the people I&rsquo;ve met, and the silence in between have taught me more about myself than I ever expected.</p>
+        <p>I chose photography because it&rsquo;s the only way I know how to hold onto these fleeting moments — <span style="color: var(--text);">to remember what life felt like while I was living it.</span></p>
+        <p class="intro__signature" style="text-align: right;">— Netiwat C.</p>
 
         <div class="about__stats">
           <div>
@@ -1660,20 +1671,88 @@ const IMG = (url, w=1200) => url.startsWith('http') ? `${url}?w=${w}&q=80&auto=f
 
 /* ====================== GALLERY ====================== */
 const masonry = document.getElementById('masonry');
-// Split PHOTOS into 2 random sets (PHOTOS already shuffled)
-const SET_SIZE = Math.ceil(PHOTOS.length / 2);
-const SETS = {
-  A: PHOTOS.slice(0, SET_SIZE),
-  B: PHOTOS.slice(SET_SIZE)
-};
+
+function fyShuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Interleave landscapes and portraits so no long runs of the same orientation appear
+// next to each other in the masonry. The rarer orientation gets distributed evenly
+// through the more common one (e.g. 1 landscape every ~3 portraits).
+function interleavedOrder(items) {
+  const landscapes = fyShuffle(items.filter(p => p.landscape));
+  const portraits  = fyShuffle(items.filter(p => !p.landscape));
+  if (!landscapes.length) return portraits;
+  if (!portraits.length)  return landscapes;
+  const smaller = landscapes.length <= portraits.length ? landscapes : portraits;
+  const bigger  = smaller === landscapes ? portraits : landscapes;
+  const step = bigger.length / smaller.length;
+  const result = [];
+  let bi = 0, si = 0, acc = 0;
+  while (bi < bigger.length || si < smaller.length) {
+    if (si < smaller.length && acc >= step - 0.0001) {
+      result.push(smaller[si++]);
+      acc -= step;
+    } else if (bi < bigger.length) {
+      result.push(bigger[bi++]);
+      acc++;
+    } else if (si < smaller.length) {
+      result.push(smaller[si++]);
+    }
+  }
+  return result;
+}
+
+let SETS = { A: [], B: [] };
+let ORDERED_PHOTOS = [];
 let currentSet = 'A';
 let currentFilter = 'all';
+
+// Preload each image to read its natural dimensions, then build mixed order.
+// Once done, the gallery renders with portraits and landscapes interleaved.
+Promise.all(PHOTOS.map(p => new Promise(resolve => {
+  const img = new Image();
+  img.onload  = () => resolve({ ...p, landscape: img.naturalWidth >= img.naturalHeight });
+  img.onerror = () => resolve({ ...p, landscape: false });
+  img.src = p.src;
+}))).then(photosWithOrient => {
+  const mixed = interleavedOrder(photosWithOrient);
+  const SET_SIZE = Math.ceil(mixed.length / 2);
+  SETS.A = mixed.slice(0, SET_SIZE);
+  SETS.B = mixed.slice(SET_SIZE);
+  ORDERED_PHOTOS = mixed;
+  renderGallery();
+});
+
+// True masonry: each photo's box = imageH + bottom padding (= --masonry-gap).
+// padding-bottom creates a uniform vertical "gap" that matches column-gap exactly.
+function sizePhoto(photo) {
+  const img = photo.querySelector('img');
+  if (!img || !img.naturalHeight) return;
+  const colWidth = photo.getBoundingClientRect().width;
+  if (!colWidth) return;
+  const ratio = img.naturalHeight / img.naturalWidth;
+  const renderedH = Math.ceil(colWidth * ratio);
+  const gap = parseFloat(getComputedStyle(masonry).getPropertyValue('--masonry-gap')) || 12;
+  const totalH = renderedH + gap;
+  photo.style.height = totalH + 'px';
+  photo.style.gridRowEnd = `span ${totalH}`;
+}
+
+function layoutMasonry() {
+  masonry.querySelectorAll('.photo').forEach(sizePhoto);
+}
 
 function renderGallery() {
   // Set toggle (01/02) only applies to "All" view; category filters show every matching photo
   const list = currentFilter === 'all'
     ? SETS[currentSet]
-    : PHOTOS.filter(p => p.cat === currentFilter);
+    : ORDERED_PHOTOS.filter(p => p.cat === currentFilter);
   masonry.innerHTML = list.map((p, i) => {
     const alt = [p.title, p.loc].filter(Boolean).join(' — ') || 'Photograph';
     const caption = (p.title || p.loc) ? `
@@ -1688,8 +1767,25 @@ function renderGallery() {
         <img src="${IMG(p.src, 900)}" alt="${alt}" loading="${i < 3 ? 'eager' : 'lazy'}" />${caption}
       </a>`;
   }).join('');
+
+  // Set row span as each image loads (or now if cached)
+  masonry.querySelectorAll('.photo').forEach(photo => {
+    const img = photo.querySelector('img');
+    if (img.complete && img.naturalHeight) {
+      sizePhoto(photo);
+    } else {
+      img.addEventListener('load', () => sizePhoto(photo), { once: true });
+      img.addEventListener('error', () => sizePhoto(photo), { once: true });
+    }
+  });
 }
-renderGallery();
+// renderGallery() is invoked once orientation preload completes (see Promise.all above)
+
+let _masonryResizeT = null;
+window.addEventListener('resize', () => {
+  clearTimeout(_masonryResizeT);
+  _masonryResizeT = setTimeout(layoutMasonry, 150);
+});
 
 document.querySelectorAll('.gallery-tab').forEach(tab => {
   tab.addEventListener('click', () => {
