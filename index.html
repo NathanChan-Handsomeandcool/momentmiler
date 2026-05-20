@@ -1143,11 +1143,11 @@
 
         <div class="about__stats">
           <div>
-            <div class="stat__num">28</div>
+            <div class="stat__num" id="statCountries">0</div>
             <div class="stat__label">Countries</div>
           </div>
           <div>
-            <div class="stat__num">120k+</div>
+            <div class="stat__num">20k+</div>
             <div class="stat__label">Frames Taken</div>
           </div>
           <div>
@@ -1488,7 +1488,9 @@ timeline.innerHTML = sortedYears.map(year => {
   </li>`;
 }).join('');
 
-document.getElementById('mapCount').textContent = new Set(TRIPS.map(t => t.country || t.title)).size;
+const countriesVisited = new Set(TRIPS.map(t => t.country || t.title)).size;
+document.getElementById('mapCount').textContent = countriesVisited;
+document.getElementById('statCountries').textContent = countriesVisited;
 
 /* ====================== MAP ====================== */
 const map = L.map('worldMap', {
