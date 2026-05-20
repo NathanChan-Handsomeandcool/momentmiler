@@ -13,6 +13,19 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
+<script>
+  // Set theme before paint to avoid flash. Default = dark.
+  (function () {
+    try {
+      var saved = localStorage.getItem('momentmiler:theme');
+      var theme = (saved === 'dark' || saved === 'light') ? saved : 'dark';
+      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+
 <style>
   /* =========================================================
      TOKENS
@@ -39,6 +52,26 @@
 
     --t-fast: 200ms cubic-bezier(.2,.7,.2,1);
     --t-med: 380ms cubic-bezier(.2,.7,.2,1);
+  }
+
+  /* =========================================================
+     DARK THEME
+     ========================================================= */
+  [data-theme="dark"] {
+    --bg: #0E0F11;
+    --bg-elev: #17181B;
+    --text: #ECECEC;
+    --text-muted: #9A9A9A;
+    --text-soft: #6B6B6B;
+    --border: #2A2A2D;
+    --border-strong: #ECECEC;
+    --accent: #D86A4B;
+    --accent-soft: #4A2A20;
+    --overlay: rgba(0, 0, 0, 0.65);
+  }
+  [data-theme="dark"] .nav.is-solid {
+    background: rgba(14, 15, 17, 0.88);
+    border-bottom-color: var(--border);
   }
 
   /* =========================================================
@@ -154,6 +187,25 @@
     margin: -8px;
   }
   .nav__toggle svg { width: 24px; height: 24px; }
+
+  .nav__theme {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    padding: 6px;
+    margin: -6px 0 -6px 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: opacity var(--t-fast);
+  }
+  .nav__theme:hover { opacity: 0.65; }
+  .nav__theme svg { width: 18px; height: 18px; }
+  .nav__theme .nav__theme-icon--sun { display: none; }
+  [data-theme="dark"] .nav__theme .nav__theme-icon--moon { display: none; }
+  [data-theme="dark"] .nav__theme .nav__theme-icon--sun { display: inline-block; }
 
   @media (max-width: 780px) {
     .nav__menu {
@@ -712,6 +764,31 @@
     transition: transform 280ms cubic-bezier(.2,.7,.2,1), background 220ms;
     position: relative;
   }
+  .pin--upcoming {
+    width: 9px;
+    height: 9px;
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    animation: pin-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pin-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(183, 71, 42, 0.45); }
+    50%      { box-shadow: 0 0 0 6px rgba(183, 71, 42, 0); }
+  }
+  .popup-card__tag {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 1px 6px 0;
+    border-radius: 999px;
+    margin-left: 6px;
+    vertical-align: 2px;
+    font-weight: 500;
+  }
   .pin::before {
     content: '';
     position: absolute;
@@ -832,6 +909,22 @@
     font-weight: 400;
     vertical-align: 1px;
   }
+  .timeline-trip__tag {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 2px 7px 1px;
+    border-radius: 999px;
+    margin-left: 10px;
+    font-weight: 500;
+    vertical-align: 2px;
+    line-height: 1.2;
+  }
+  .timeline-trip.is-upcoming { color: var(--text); }
 
   @media (max-width: 700px) {
     .timeline-year {
@@ -1179,6 +1272,17 @@
         <li><a class="nav__link" href="#gallery" data-link>Gallery</a></li>
         <li><a class="nav__link" href="#about" data-link>About</a></li>
         <li><a class="nav__link" href="#journey" data-link>Journey</a></li>
+        <li>
+          <button class="nav__theme" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+            <svg class="nav__theme-icon nav__theme-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg class="nav__theme-icon nav__theme-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </li>
       </ul>
     </nav>
   </div>
@@ -1311,7 +1415,7 @@
 <!-- ============================ JOURNEY ======================== -->
 <section class="section" id="journey" style="background: var(--bg);">
   <div class="container">
-    <div class="section__head reveal">
+    <div class="section__head section__head--center reveal">
       <span class="eyebrow">The Map</span>
       <h2 class="h1">Journey <em>so far</em></h2>
       <p class="lead">Every pin is a place I have stood. Pick a year from the timeline, or hover a marker on the map.</p>
@@ -1457,6 +1561,9 @@ const PHOTOS = [
 ];
 
 const TRIPS = [
+  { year: 2026, country: 'Kazakhstan', title: 'Almaty',             lat:  43.2220, lng:  76.8512, upcoming: true },
+  { year: 2026, country: 'Kyrgyzstan', title: 'Bishkek',            lat:  42.8746, lng:  74.5698, upcoming: true },
+  { year: 2026, country: 'Japan',      title: 'Japan',              lat:  35.6762, lng: 139.6503, upcoming: true },
   { year: 2026, country: '',          title: 'Argentina',           lat: -34.6037, lng: -58.3816 },
   { year: 2026, country: '',          title: 'Chile',               lat: -33.4489, lng: -70.6693 },
   { year: 2026, country: '',          title: 'Peru',                lat: -13.5320, lng: -71.9675 },
@@ -1607,6 +1714,11 @@ document.querySelectorAll('.gallery-set').forEach(btn => {
     btn.setAttribute('aria-selected', 'true');
     currentSet = btn.dataset.set;
     renderGallery();
+    // After re-render, scroll back to top of gallery (offset for fixed nav)
+    const gallerySection = document.getElementById('gallery');
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
+    const top = gallerySection.getBoundingClientRect().top + window.scrollY - navH;
+    window.scrollTo({ top, behavior: 'smooth' });
   });
 });
 
@@ -1691,7 +1803,9 @@ timeline.innerHTML = sortedYears.map(year => {
     <ul class="timeline-year__trips">
       ${uniqueTrips.map(t => {
         const label = t.country || t.title;
-        return `<li><button class="timeline-trip" data-i="${t._i}" aria-label="${year} ${label}">${label}</button></li>`;
+        const upcomingTag = t.upcoming ? '<span class="timeline-trip__tag">Upcoming</span>' : '';
+        const aria = `${year} ${label}${t.upcoming ? ' (upcoming)' : ''}`;
+        return `<li><button class="timeline-trip${t.upcoming ? ' is-upcoming' : ''}" data-i="${t._i}" aria-label="${aria}">${label}${upcomingTag}</button></li>`;
       }).join('')}
     </ul>
   </li>`;
@@ -1714,18 +1828,23 @@ const map = L.map('worldMap', {
 
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-  subdomains: 'abcd',
-  maxZoom: 8,
-  minZoom: 2,
-  attribution: '&copy; OpenStreetMap &copy; CARTO',
-}).addTo(map);
+const TILE_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
+const TILE_DARK = 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png';
+const baseTiles = L.tileLayer(
+  document.documentElement.getAttribute('data-theme') === 'dark' ? TILE_DARK : TILE_LIGHT,
+  {
+    subdomains: 'abcd',
+    maxZoom: 8,
+    minZoom: 2,
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+  }
+).addTo(map);
 
 const markers = {};
 TRIPS.forEach((t, i) => {
   const icon = L.divIcon({
     className: '',
-    html: '<div class="pin"></div>',
+    html: `<div class="pin${t.upcoming ? ' pin--upcoming' : ''}"></div>`,
     iconSize: [14, 14],
     iconAnchor: [7, 7],
   });
@@ -1734,7 +1853,7 @@ TRIPS.forEach((t, i) => {
     <div class="popup-card">
       ${t.img ? `<img src="${IMG(t.img, 600)}" alt="${t.title}">` : ''}
       <div class="popup-card__body">
-        <div class="popup-card__title">${t.title}</div>
+        <div class="popup-card__title">${t.title}${t.upcoming ? ' <span class="popup-card__tag">Upcoming</span>' : ''}</div>
         <div class="popup-card__meta">${t.country ? `${t.country} · ${t.year}` : t.year}</div>
       </div>
     </div>
@@ -1837,6 +1956,29 @@ setTimeout(() => {
 }, 1500);
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ====================== THEME TOGGLE ====================== */
+const themeToggle = document.getElementById('themeToggle');
+const THEME_KEY = 'momentmiler:theme';
+
+function applyTheme(theme) {
+  if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+  themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+  themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  if (typeof baseTiles !== 'undefined' && baseTiles) {
+    baseTiles.setUrl(theme === 'dark' ? TILE_DARK : TILE_LIGHT);
+  }
+}
+
+// Sync button state with theme that pre-paint script already applied
+applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+  applyTheme(next);
+});
 </script>
 
 </body>
