@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- EF 24-70 f/2.8 II — standard zoom, medium length -->
+  <g transform="translate(0,30)">
+    <!-- Lens hood (squared standard zoom style) -->
+    <path d="M60 75 L78 82 v86 L60 175 z"/>
+    <!-- Front element -->
+    <path d="M78 78 h60 v94 h-60 z"/>
+    <ellipse cx="96" cy="125" rx="14" ry="38" opacity="0.3" fill="currentColor" stroke="none"/>
+    <ellipse cx="96" cy="125" rx="12" ry="34"/>
+    <!-- Zoom ring -->
+    <rect x="138" y="80" width="64" height="90"/>
+    <line x1="144" y1="170" x2="196" y2="170" opacity="0.4"/>
+    <!-- Distance scale -->
+    <rect x="146" y="92" width="48" height="6" rx="1" opacity="0.4"/>
+    <!-- Focus ring -->
+    <rect x="202" y="85" width="50" height="80"/>
+    <!-- Body to mount -->
+    <path d="M252 95 L295 105 v40 L252 155 z"/>
+    <!-- Mount -->
+    <path d="M295 100 h14 v50 h-14 z"/>
+    <rect x="309" y="115" width="4" height="20"/>
+    <!-- Switches -->
+    <rect x="212" y="100" width="14" height="4" rx="1"/>
+    <rect x="212" y="108" width="14" height="4" rx="1"/>
+    <!-- Red ring (L-series) -->
+    <rect x="254" y="118" width="2" height="14" fill="currentColor" stroke="none"/>
+  </g>
+  <text x="200" y="265" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="300" letter-spacing="2" fill="currentColor" opacity="0.5" stroke="none">EF 24-70mm f/2.8 II</text>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Mirrorless body — slimmer than DSLR, smaller pentaprism -->
+  <path d="M70 130 h120 a8 8 0 0 1 8 -8 h60 a8 8 0 0 1 8 8 h70 a12 12 0 0 1 12 12 v75 a12 12 0 0 1 -12 12 h-260 a12 12 0 0 1 -12 -12 v-75 a12 12 0 0 1 12 -12 z"/>
+  <!-- Pentaprism hump (small) -->
+  <path d="M190 122 v-14 a4 4 0 0 1 4 -4 h52 a4 4 0 0 1 4 4 v14"/>
+  <!-- Hot shoe -->
+  <rect x="210" y="106" width="20" height="4" rx="1"/>
+  <!-- Lens mount -->
+  <circle cx="220" cy="183" r="38"/>
+  <circle cx="220" cy="183" r="30"/>
+  <circle cx="220" cy="183" r="6" fill="currentColor" opacity="0.4"/>
+  <!-- Grip -->
+  <path d="M330 142 q12 4 12 18 v45 q0 14 -12 18"/>
+  <!-- Shutter button -->
+  <circle cx="346" cy="142" r="3"/>
+  <!-- Dials -->
+  <circle cx="312" cy="130" r="5"/>
+  <circle cx="98" cy="130" r="5"/>
+  <!-- LCD screen on back (suggested) -->
+  <rect x="100" y="155" width="40" height="40" rx="2"/>
+  <!-- Label -->
+  <text x="200" y="265" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="300" letter-spacing="2" fill="currentColor" opacity="0.5" stroke="none">CANON R5</text>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- DSLR body — bulkier than R5, larger pentaprism -->
+  <path d="M60 130 h130 a8 8 0 0 1 8 -8 h64 a8 8 0 0 1 8 8 h70 a12 12 0 0 1 12 12 v80 a12 12 0 0 1 -12 12 h-280 a12 12 0 0 1 -12 -12 v-80 a12 12 0 0 1 12 -12 z"/>
+  <!-- Pentaprism hump (taller, classic DSLR) -->
+  <path d="M190 122 v-22 a4 4 0 0 1 4 -4 h64 a4 4 0 0 1 4 4 v22"/>
+  <!-- Hot shoe -->
+  <rect x="214" y="98" width="24" height="4" rx="1"/>
+  <!-- Top LCD info panel -->
+  <rect x="280" y="116" width="46" height="14" rx="2"/>
+  <!-- Lens mount (DSLR style with mount tabs) -->
+  <circle cx="220" cy="186" r="42"/>
+  <circle cx="220" cy="186" r="34"/>
+  <circle cx="220" cy="186" r="8" fill="currentColor" opacity="0.4"/>
+  <!-- Mirror outline -->
+  <rect x="200" y="170" width="40" height="28" rx="2" opacity="0.3"/>
+  <!-- Deep grip -->
+  <path d="M330 142 q14 6 14 22 v48 q0 16 -14 22"/>
+  <!-- Shutter button -->
+  <circle cx="348" cy="146" r="3"/>
+  <!-- Dials -->
+  <circle cx="306" cy="130" r="5"/>
+  <circle cx="86" cy="130" r="5"/>
+  <!-- LCD on back -->
+  <rect x="92" y="155" width="42" height="42" rx="2"/>
+  <!-- Buttons -->
+  <circle cx="146" cy="160" r="2"/>
+  <circle cx="146" cy="170" r="2"/>
+  <circle cx="146" cy="180" r="2"/>
+  <!-- Label -->
+  <text x="200" y="265" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="300" letter-spacing="2" fill="currentColor" opacity="0.5" stroke="none">5D MARK III</text>
+</svg>
