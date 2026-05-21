@@ -18,9 +18,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300;1,400&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-
 <script>
   // Set theme before paint to avoid flash. Default = dark.
   (function () {
@@ -610,6 +607,47 @@
   .gallery-set:hover { color: var(--text-muted); }
   .gallery-set.is-active { color: var(--text); }
   .gallery-set.is-active::after { transform: scaleX(1); }
+  .gallery-sets__divider {
+    width: 1px;
+    height: 14px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+  .gallery-bw {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 0;
+    padding: 6px 4px;
+    color: var(--text-soft);
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 200ms;
+  }
+  .gallery-bw:hover { color: var(--text-muted); }
+  .gallery-bw[aria-pressed="true"] { color: var(--text); }
+  .gallery-bw__swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: linear-gradient(90deg, #fff 0 50%, #1A1A1A 50% 100%);
+    transition: transform 220ms cubic-bezier(.2,.7,.2,1), filter 220ms;
+  }
+  .gallery-bw[aria-pressed="true"] .gallery-bw__swatch {
+    transform: rotate(180deg);
+    filter: none;
+  }
+
+  /* B&W filter on gallery photos */
+  .masonry img,
+  .masonry .photo { transition: filter 600ms ease; }
+  .masonry.is-bw img { filter: grayscale(1) contrast(1.04); }
+
   .gallery-sets__sep {
     color: var(--border);
     font-family: var(--font-display);
@@ -715,130 +753,113 @@
     width: 100%;
     height: 100%;
     background: transparent;
-    filter: grayscale(1) contrast(0.88) brightness(1.06);
-    opacity: 0.55;
-    transition: opacity 600ms ease, filter 600ms ease;
+    cursor: grab;
   }
-  .map-wrap:hover #worldMap { opacity: 0.78; }
-  .leaflet-container { font-family: var(--font-body); background: transparent !important; outline: none; }
-  .leaflet-control-attribution { display: none; }
-  .leaflet-bar {
-    border: 0 !important;
-    box-shadow: none !important;
-    background: transparent !important;
-  }
-  .leaflet-bar a {
-    background: var(--bg) !important;
-    color: var(--text-muted) !important;
-    border: 1px solid var(--border) !important;
-    width: 30px !important;
-    height: 30px !important;
-    line-height: 28px !important;
-    font-weight: 300 !important;
-    font-size: 18px !important;
-    border-radius: 0 !important;
-    transition: color 200ms, background 200ms;
-  }
-  .leaflet-bar a:hover {
-    background: var(--bg-elev) !important;
-    color: var(--text) !important;
-  }
-  .leaflet-bar a + a { border-top: 0 !important; }
+  #worldMap:active { cursor: grabbing; }
+  #worldMap canvas { display: block; outline: none; }
 
-  .leaflet-popup-content-wrapper {
-    background: var(--bg-elev);
-    border-radius: 0;
-    border: 1px solid var(--border);
-    box-shadow: 0 24px 50px -24px rgba(10, 10, 11, 0.22);
-    padding: 0;
-  }
-  .leaflet-popup-content { margin: 0; width: 220px !important; }
-  .leaflet-popup-tip {
-    background: var(--bg-elev);
-    box-shadow: none;
-    border: 1px solid var(--border);
-    border-top: 0;
-    border-left: 0;
-    width: 12px;
-    height: 12px;
-  }
-  .popup-card img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    display: block;
-    filter: saturate(0.9);
-  }
-  .popup-card__body { padding: 14px 16px 16px; }
-  .popup-card__title {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 400;
-    margin: 0 0 6px;
-    letter-spacing: -0.015em;
-  }
-  .popup-card__meta {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-soft);
-  }
-
-  /* hairline pin */
-  .pin {
-    width: 7px;
-    height: 7px;
-    background: var(--text);
-    border-radius: 50%;
-    transition: transform 280ms cubic-bezier(.2,.7,.2,1), background 220ms;
+  /* SVG teardrop pins anchored to the globe */
+  .globe-pin {
     position: relative;
+    cursor: pointer;
+    color: #1A1A1A;
+    transform: translate(-50%, -100%);
+    transition: opacity 240ms ease, filter 200ms;
+    will-change: transform, opacity;
   }
-  .pin--upcoming {
-    width: 9px;
-    height: 9px;
-    background: transparent;
-    border: 1.5px solid var(--accent);
-    animation: pin-pulse 2.4s ease-in-out infinite;
+  [data-theme="dark"] .globe-pin { color: #FFFFFF; }
+  .globe-pin svg {
+    display: block;
+    fill: currentColor;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+    transition: transform 220ms cubic-bezier(.2,.7,.2,1), fill 220ms;
+    transform-origin: 50% 100%;
   }
-  @keyframes pin-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(183, 71, 42, 0.45); }
-    50%      { box-shadow: 0 0 0 6px rgba(183, 71, 42, 0); }
+  .globe-pin:hover svg { transform: scale(1.25); }
+  .globe-pin:hover { color: var(--accent); }
+  .globe-pin--city svg { opacity: 0.78; }
+
+  /* Upcoming trip pins use vivid orange — sharp, no glow */
+  .globe-pin--upcoming { color: #F97316 !important; }
+  .globe-pin--upcoming svg {
+    fill: #F97316;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
   }
-  .popup-card__tag {
-    display: inline-block;
+
+  .globe-pin__tip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    box-shadow: 0 18px 40px -22px rgba(10, 10, 11, 0.4);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+    text-align: center;
+  }
+  .globe-pin__tip-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .globe-pin__tip-country {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .globe-pin__tip-year {
     font-family: var(--font-body);
     font-size: 9px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: 1px 6px 0;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+  .globe-pin__tip-year.is-upcoming {
+    color: #F97316;
+    border: 1px solid #F97316;
+    padding: 2px 8px 1px;
     border-radius: 999px;
-    margin-left: 6px;
-    vertical-align: 2px;
+    align-self: center;
     font-weight: 500;
   }
-  .pin::before {
-    content: '';
+  .globe-pin:hover .globe-pin__tip { opacity: 1; }
+
+  .globe-controls {
     position: absolute;
-    inset: -7px;
-    border: 1px solid var(--text);
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 280ms, transform 280ms cubic-bezier(.2,.7,.2,1);
-    transform: scale(0.6);
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    z-index: 4;
   }
-  .leaflet-marker-icon:hover .pin,
-  .leaflet-marker-icon:focus .pin,
-  .pin.is-active {
-    background: var(--accent);
-    transform: scale(1.15);
+  .globe-controls__btn {
+    width: 30px;
+    height: 30px;
+    background: var(--bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 200ms, background 200ms;
   }
-  .leaflet-marker-icon:hover .pin::before,
-  .pin.is-active::before {
-    opacity: 1;
-    transform: scale(1);
-    border-color: var(--accent);
+  .globe-controls__btn:hover {
+    background: var(--bg-elev);
+    color: var(--text);
   }
 
   /* map editorial overlay */
@@ -1392,6 +1413,11 @@
       <button class="gallery-set is-active" data-set="A" role="tab" aria-selected="true">01</button>
       <span class="gallery-sets__sep" aria-hidden="true">/</span>
       <button class="gallery-set" data-set="B" role="tab" aria-selected="false">02</button>
+      <span class="gallery-sets__divider" aria-hidden="true"></span>
+      <button class="gallery-bw" id="bwToggle" type="button" aria-pressed="false" aria-label="Toggle black and white">
+        <span class="gallery-bw__swatch" aria-hidden="true"></span>
+        <span class="gallery-bw__label">B&amp;W</span>
+      </button>
     </div>
   </div>
 </section>
@@ -1458,7 +1484,11 @@
     <div class="journey-grid reveal">
       <div class="map-wrap">
         <div class="map-meta map-meta--tl"><strong id="mapCount">0</strong>Countries visited</div>
-        <div id="worldMap" aria-label="World map with visited places"></div>
+        <div id="worldMap" aria-label="3D globe of visited places"></div>
+        <div class="globe-controls">
+          <button class="globe-controls__btn" id="globeZoomIn"  type="button" aria-label="Zoom in">+</button>
+          <button class="globe-controls__btn" id="globeZoomOut" type="button" aria-label="Zoom out">−</button>
+        </div>
       </div>
       <div class="timeline-wrap">
         <ul class="timeline" id="timeline" aria-label="Trip timeline">
@@ -1509,8 +1539,7 @@
   <div class="lightbox__cap" id="lightboxCap"></div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/globe.gl@2.46.1/dist/globe.gl.min.js" defer></script>
 
 <script>
 /* ====================== DATA ====================== */
@@ -1970,73 +1999,221 @@ const countriesVisited = new Set([
 document.getElementById('mapCount').textContent = countriesVisited;
 document.getElementById('statCountries').textContent = countriesVisited;
 
-/* ====================== MAP ====================== */
-const map = L.map('worldMap', {
-  zoomControl: false,
-  worldCopyJump: true,
-  scrollWheelZoom: false,
-  attributionControl: false,
-}).setView([25, 10], 2);
+/* ====================== 3D GLOBE ====================== */
+const GLOBE_TEX = {
+  light: 'https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg',
+  dark:  'https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg',
+};
+const GLOBE_BUMP = 'https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png';
+// Emissive uses the texture itself as emissiveMap so the dark side keeps
+// its natural saturated colors instead of getting washed out by flat white.
+const GLOBE_EMISSIVE = {
+  light: { color: 0xffffff, intensity: 0.35 },
+  dark:  { color: 0xffffff, intensity: 0.55 },
+};
+const GLOBE_EXPOSURE = { light: 1.25, dark: 1.45 };
 
-L.control.zoom({ position: 'bottomright' }).addTo(map);
+const globeEl = document.getElementById('worldMap');
+let globe = null;
+let tripPointIndex = {}; // tripIndex -> point
 
-const TILE_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
-const TILE_DARK = 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png';
-const baseTiles = L.tileLayer(
-  document.documentElement.getAttribute('data-theme') === 'dark' ? TILE_DARK : TILE_LIGHT,
-  {
-    subdomains: 'abcd',
-    maxZoom: 8,
-    minZoom: 2,
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
+// Map: country → sorted array of years actually visited (not including upcoming).
+// Used so city pins can also show the year(s) those countries were visited.
+function buildCountryYears() {
+  const m = {};
+  TRIPS.forEach(t => {
+    if (t.upcoming) return;
+    const c = t.country || t.title;
+    if (!c) return;
+    (m[c] = m[c] || new Set()).add(t.year);
+  });
+  const out = {};
+  for (const k in m) out[k] = [...m[k]].sort((a, b) => b - a);
+  return out;
+}
+const COUNTRY_YEARS = buildCountryYears();
+
+function formatYears(country) {
+  const arr = COUNTRY_YEARS[country];
+  if (!arr || !arr.length) return '';
+  if (arr.length <= 3) return arr.join(', ');
+  return `${arr[0]}, ${arr[1]} +${arr.length - 2} more`;
+}
+
+// Build unified points list: TRIPS get bigger altitude, CITIES sit closer to surface
+function buildPoints() {
+  const tripPoints = TRIPS.map((t, i) => {
+    const country = t.country || t.title;
+    const cityLabel = (t.title && t.title !== country) ? t.title : '';
+    return {
+      kind: 'trip',
+      tripIndex: i,
+      lat: t.lat,
+      lng: t.lng,
+      city: cityLabel,
+      country,
+      year: t.year,
+      years: t.upcoming ? '' : String(t.year),
+      upcoming: !!t.upcoming,
+    };
+  });
+  const cityPoints = CITIES.map(c => ({
+    kind: 'city',
+    lat: c.lat,
+    lng: c.lng,
+    city: c.name,
+    country: c.country,
+    years: formatYears(c.country),
+  }));
+  return [...tripPoints, ...cityPoints];
+}
+
+function createPinEl(p) {
+  const el = document.createElement('div');
+  el.className = 'globe-pin ' + (p.kind === 'trip' ? 'globe-pin--trip' : 'globe-pin--city') + (p.upcoming ? ' globe-pin--upcoming' : '');
+  const size = p.kind === 'trip' ? 16 : 11;
+  const h = Math.round(size * 1.36);
+
+  const headline = p.city || p.country;
+  const subline  = p.city ? p.country : '';
+  const yearText = p.upcoming ? 'Upcoming' : p.years;
+
+  el.innerHTML = `
+    <svg viewBox="0 0 24 32" width="${size}" height="${h}" aria-hidden="true">
+      <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0zm0 16.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+    </svg>
+    <span class="globe-pin__tip">
+      <span class="globe-pin__tip-title">${headline}</span>
+      ${subline ? `<span class="globe-pin__tip-country">${subline}</span>` : ''}
+      ${yearText ? `<span class="globe-pin__tip-year${p.upcoming ? ' is-upcoming' : ''}">${yearText}</span>` : ''}
+    </span>
+  `;
+  el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (globe) globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.4 }, 900);
+  });
+  return el;
+}
+
+function applyGlobeBrightness(theme) {
+  if (!globe) return;
+  const cfg = GLOBE_EMISSIVE[theme] || GLOBE_EMISSIVE.light;
+  const exp = GLOBE_EXPOSURE[theme] ?? 1.25;
+  const mat = globe.globeMaterial();
+  if (mat && mat.emissive) {
+    mat.emissive.setHex(cfg.color);
+    mat.emissiveIntensity = cfg.intensity;
+    mat.needsUpdate = true;
   }
-).addTo(map);
+  // Boost overall color punch via renderer exposure
+  if (globe.rendererConfig) globe.rendererConfig({ toneMappingExposure: exp });
 
-const markers = {};
-TRIPS.forEach((t, i) => {
-  const icon = L.divIcon({
-    className: '',
-    html: `<div class="pin${t.upcoming ? ' pin--upcoming' : ''}"></div>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-  });
-  const m = L.marker([t.lat, t.lng], { icon }).addTo(map);
-  m.bindPopup(`
-    <div class="popup-card">
-      ${t.img ? `<img src="${IMG(t.img, 600)}" alt="${t.title}">` : ''}
-      <div class="popup-card__body">
-        <div class="popup-card__title">${t.title}${t.upcoming ? ' <span class="popup-card__tag">Upcoming</span>' : ''}</div>
-        <div class="popup-card__meta">${t.country ? `${t.country} · ${t.year}` : t.year}</div>
-      </div>
-    </div>
-  `, { closeButton: false, maxWidth: 240 });
-  markers[i] = m;
-});
+  // Use the diffuse texture itself as emissive map so the shadowed
+  // hemisphere keeps its natural saturated colors (instead of plain white wash).
+  const wireEmissiveMap = () => {
+    if (!mat) return;
+    if (mat.map) {
+      if (mat.emissiveMap !== mat.map) {
+        mat.emissiveMap = mat.map;
+        mat.needsUpdate = true;
+      }
+    } else {
+      setTimeout(wireEmissiveMap, 200);
+    }
+  };
+  wireEmissiveMap();
+}
 
-CITIES.forEach(c => {
-  const icon = L.divIcon({
-    className: '',
-    html: '<div class="pin"></div>',
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-  });
-  L.marker([c.lat, c.lng], { icon }).addTo(map).bindPopup(`
-    <div class="popup-card">
-      <div class="popup-card__body">
-        <div class="popup-card__title">${c.name}</div>
-        <div class="popup-card__meta">${c.country}</div>
-      </div>
-    </div>
-  `, { closeButton: false, maxWidth: 200 });
-});
+function sizeGlobe() {
+  if (!globe) return;
+  globe.width(globeEl.clientWidth).height(globeEl.clientHeight);
+}
+
+function initGlobe() {
+  if (typeof Globe === 'undefined' || !globeEl) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const points = buildPoints();
+
+  globe = Globe()
+    .backgroundColor('rgba(0,0,0,0)')
+    .globeImageUrl(isDark ? GLOBE_TEX.dark : GLOBE_TEX.light)
+    .bumpImageUrl(GLOBE_BUMP)
+    .showAtmosphere(true)
+    .atmosphereColor('#a8c5e8')
+    .atmosphereAltitude(0.22)
+    .htmlElementsData(points)
+    .htmlLat('lat')
+    .htmlLng('lng')
+    .htmlAltitude(p => p.kind === 'trip' ? 0.035 : 0.012)
+    .htmlElement(p => createPinEl(p))
+    .htmlElementVisibilityModifier((el, isVisible) => {
+      el.style.opacity = isVisible ? '' : '0';
+      el.style.pointerEvents = isVisible ? '' : 'none';
+    })
+    (globeEl);
+
+  // Boost surface brightness so the texture pops
+  applyGlobeBrightness(isDark ? 'dark' : 'light');
+
+  // Index trip points so timeline → globe still works
+  points.forEach(p => { if (p.kind === 'trip') tripPointIndex[p.tripIndex] = p; });
+
+  sizeGlobe();
+  window.addEventListener('resize', sizeGlobe);
+
+  // Camera + controls
+  globe.pointOfView({ lat: 25, lng: 10, altitude: 2.4 }, 0);
+  const controls = globe.controls();
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.35;
+  controls.enableZoom = true;
+  controls.minDistance = 180;
+  controls.maxDistance = 600;
+
+  // Pause auto-rotate on user interaction; resume after idle
+  let idleTimer = null;
+  const pauseRotate = () => {
+    controls.autoRotate = false;
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => { controls.autoRotate = true; }, 4000);
+  };
+  globeEl.addEventListener('pointerdown', pauseRotate);
+  globeEl.addEventListener('wheel', pauseRotate, { passive: true });
+
+  // Zoom buttons
+  const zoomBy = (factor) => {
+    const pov = globe.pointOfView();
+    const next = Math.max(0.6, Math.min(4, pov.altitude * factor));
+    globe.pointOfView({ lat: pov.lat, lng: pov.lng, altitude: next }, 350);
+  };
+  document.getElementById('globeZoomIn') ?.addEventListener('click', () => zoomBy(0.75));
+  document.getElementById('globeZoomOut')?.addEventListener('click', () => zoomBy(1 / 0.75));
+}
+
+function setGlobeTheme(theme) {
+  if (!globe) return;
+  const isDark = theme === 'dark';
+  globe.globeImageUrl(isDark ? GLOBE_TEX.dark : GLOBE_TEX.light)
+       .atmosphereColor('#a8c5e8');
+  applyGlobeBrightness(theme);
+}
+
+// Initialize once the deferred globe.gl script is ready
+if (typeof Globe !== 'undefined') {
+  initGlobe();
+} else {
+  window.addEventListener('load', initGlobe, { once: true });
+}
 
 timeline.addEventListener('click', (e) => {
   const btn = e.target.closest('.timeline-trip');
-  if (!btn) return;
+  if (!btn || !globe) return;
   const i = +btn.dataset.i;
   const t = TRIPS[i];
-  map.flyTo([t.lat, t.lng], 5, { duration: 1.2 });
-  markers[i].openPopup();
+  globe.pointOfView({ lat: t.lat, lng: t.lng, altitude: 1.2 }, 1200);
+  // brief pause on auto-rotate so the user can see the destination
+  globe.controls().autoRotate = false;
+  setTimeout(() => { if (globe) globe.controls().autoRotate = true; }, 4000);
 });
 
 /* ====================== HERO SLIDESHOW ====================== */
@@ -2118,9 +2295,7 @@ function applyTheme(theme) {
   else document.documentElement.removeAttribute('data-theme');
   themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
   themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-  if (typeof baseTiles !== 'undefined' && baseTiles) {
-    baseTiles.setUrl(theme === 'dark' ? TILE_DARK : TILE_LIGHT);
-  }
+  if (typeof setGlobeTheme === 'function') setGlobeTheme(theme);
 }
 
 // Sync button state with theme that pre-paint script already applied
@@ -2130,6 +2305,25 @@ themeToggle.addEventListener('click', () => {
   const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
   applyTheme(next);
+});
+
+/* ====================== GALLERY B&W TOGGLE ====================== */
+const bwToggle = document.getElementById('bwToggle');
+const BW_KEY = 'momentmiler:bw';
+
+function applyBW(on) {
+  masonry.classList.toggle('is-bw', on);
+  bwToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+}
+
+try {
+  applyBW(localStorage.getItem(BW_KEY) === '1');
+} catch (e) {}
+
+bwToggle.addEventListener('click', () => {
+  const next = bwToggle.getAttribute('aria-pressed') !== 'true';
+  applyBW(next);
+  try { localStorage.setItem(BW_KEY, next ? '1' : '0'); } catch (e) {}
 });
 </script>
 
