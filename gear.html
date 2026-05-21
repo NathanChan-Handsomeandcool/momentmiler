@@ -330,7 +330,8 @@
     padding: 8% 6%;
     box-sizing: border-box;
   }
-  .gear-card__media--svg {
+  .gear-card__media--svg,
+  .gear-card__media--photo {
     background: var(--bg-elev);
   }
   .gear-card__media .gear-card__placeholder {
@@ -519,20 +520,20 @@
 /* ====================== GEAR DATA ====================== */
 const GEAR = {
   cameras: [
-    { name: 'Canon R5',           meta: 'Mirrorless Body',  img: 'images/gear/canon-r5.svg' },
-    { name: 'Canon 5D Mark III',  meta: 'DSLR Body',        img: 'images/gear/canon-5d-mk3.svg' },
+    { name: 'Canon R5',           meta: 'Mirrorless Body',  img: 'images/gear/canon-r5.webp' },
+    { name: 'Canon 5D Mark III',  meta: 'DSLR Body',        img: 'images/gear/canon-5d-mk3.webp' },
   ],
   lenses: [
-    { name: 'RF 35mm f/1.8',       meta: 'RF · Prime',     img: 'images/gear/rf-35-1.8.svg' },
-    { name: 'RF 50mm f/1.8',       meta: 'RF · Prime',     img: 'images/gear/rf-50-1.8.svg' },
-    { name: 'EF 16–35mm f/2.8 II', meta: 'EF · Wide Zoom', img: 'images/gear/ef-16-35-2.8.svg' },
-    { name: 'EF 24–70mm f/2.8 II', meta: 'EF · Standard',  img: 'images/gear/ef-24-70-2.8.svg' },
-    { name: 'EF 70–200mm f/2.8 II',meta: 'EF · Telephoto', img: 'images/gear/ef-70-200-2.8.svg' },
+    { name: 'RF 35mm f/1.8',       meta: 'RF · Prime',     img: 'images/gear/rf-35-1.8.webp' },
+    { name: 'RF 50mm f/1.8',       meta: 'RF · Prime',     img: 'images/gear/rf-50-1.8.webp' },
+    { name: 'EF 16–35mm f/2.8 II', meta: 'EF · Wide Zoom', img: 'images/gear/ef-16-35-2.8.webp' },
+    { name: 'EF 24–70mm f/2.8 II', meta: 'EF · Standard',  img: 'images/gear/ef-24-70-2.8.webp' },
+    { name: 'EF 70–200mm f/2.8 II',meta: 'EF · Telephoto', img: 'images/gear/ef-70-200-2.8.webp' },
   ],
   accessories: [
-    { name: 'SmallRig 3233',                meta: 'Cage / Baseplate',     img: 'images/gear/smallrig-3233.svg' },
-    { name: 'Hilight HL-255C',              meta: 'Carbon Fiber Tripod',  img: 'images/gear/hilight-hl-255c.svg' },
-    { name: 'Hilight NB-34',                meta: 'Ball Head · 34mm',     img: 'images/gear/hilight-nb-34.svg' },
+    { name: 'SmallRig 3233',                meta: 'Cage / Baseplate',     img: 'images/gear/smallrig-3233.webp' },
+    { name: 'Hilight HL-255C',              meta: 'Carbon Fiber Tripod',  img: 'images/gear/hilight-hl-255c.webp' },
+    { name: 'Hilight NB-34',                meta: 'Ball Head · 34mm',     img: 'images/gear/hilight-nb-34.webp' },
   ],
 };
 
@@ -543,28 +544,44 @@ const PLACEHOLDER_SVG = `
   <path d="M8 6l1.2-2h5.6L16 6"/>
 </svg>`;
 
-// Render cards immediately with placeholders, then swap in SVG content as it loads.
-// Fetching and inlining lets the SVG inherit currentColor so it adapts to theme.
+// Photos render as <img> straight in the HTML (browser handles lazy-loading);
+// SVGs are fetched and inlined so they can use currentColor (theme-aware).
 function renderGroup(items, container) {
-  container.innerHTML = items.map((g, i) => `
-    <article class="gear-card">
-      <div class="gear-card__media" data-svg-src="${g.img}">
-        <span class="gear-card__placeholder">${PLACEHOLDER_SVG}</span>
-      </div>
-      <div class="gear-card__body">
-        <h3 class="gear-card__title">${g.name}</h3>
-        <p class="gear-card__meta">${g.meta}</p>
-      </div>
-    </article>
-  `).join('');
+  container.innerHTML = items.map((g) => {
+    const isSvg = /\.svg(\?|$)/i.test(g.img);
+    if (isSvg) {
+      return `
+        <article class="gear-card">
+          <div class="gear-card__media" data-svg-src="${g.img}">
+            <span class="gear-card__placeholder">${PLACEHOLDER_SVG}</span>
+          </div>
+          <div class="gear-card__body">
+            <h3 class="gear-card__title">${g.name}</h3>
+            <p class="gear-card__meta">${g.meta}</p>
+          </div>
+        </article>
+      `;
+    }
+    return `
+      <article class="gear-card">
+        <div class="gear-card__media gear-card__media--photo">
+          <img src="${g.img}" alt="${g.name}" loading="lazy" />
+        </div>
+        <div class="gear-card__body">
+          <h3 class="gear-card__title">${g.name}</h3>
+          <p class="gear-card__meta">${g.meta}</p>
+        </div>
+      </article>
+    `;
+  }).join('');
 
-  container.querySelectorAll('.gear-card__media').forEach(async (media) => {
+  // Inline SVG illustrations so currentColor follows the theme.
+  container.querySelectorAll('.gear-card__media[data-svg-src]').forEach(async (media) => {
     const url = media.getAttribute('data-svg-src');
     try {
       const res = await fetch(url);
       if (!res.ok) return;
       const text = await res.text();
-      // Strip XML/doctype prelude if present, keep the <svg>...</svg>
       const svgMatch = text.match(/<svg[\s\S]*<\/svg>/i);
       if (svgMatch) {
         media.innerHTML = svgMatch[0];
