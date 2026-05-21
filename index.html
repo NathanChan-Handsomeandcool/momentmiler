@@ -613,6 +613,13 @@
     background: var(--border);
     margin: 0 4px;
   }
+
+  .gallery-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: -24px 0 24px;
+  }
   .gallery-bw {
     display: inline-flex;
     align-items: center;
@@ -758,75 +765,53 @@
   #worldMap:active { cursor: grabbing; }
   #worldMap canvas { display: block; outline: none; }
 
-  /* SVG teardrop pins anchored to the globe */
-  .globe-pin {
-    position: relative;
-    cursor: pointer;
-    color: #1A1A1A;
+  /* Cursor-tracking tooltip on the globe — appended to <body> with
+     fixed positioning so it never gets clipped by section overflows */
+  .globe-customtip {
+    position: fixed;
     transform: translate(-50%, -100%);
-    transition: opacity 240ms ease, filter 200ms;
-    will-change: transform, opacity;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 160ms ease;
+    z-index: 9999;
+    top: 0;
+    left: 0;
   }
-  [data-theme="dark"] .globe-pin { color: #FFFFFF; }
-  .globe-pin svg {
-    display: block;
-    fill: currentColor;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
-    transition: transform 220ms cubic-bezier(.2,.7,.2,1), fill 220ms;
-    transform-origin: 50% 100%;
-  }
-  .globe-pin:hover svg { transform: scale(1.25); }
-  .globe-pin:hover { color: var(--accent); }
-  .globe-pin--city svg { opacity: 0.78; }
+  .globe-customtip.is-visible { opacity: 1; }
 
-  /* Upcoming trip pins use vivid orange — sharp, no glow */
-  .globe-pin--upcoming { color: #F97316 !important; }
-  .globe-pin--upcoming svg {
-    fill: #F97316;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
-  }
-
-  .globe-pin__tip {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
+  .globe-tip {
     background: var(--bg-elev);
     border: 1px solid var(--border);
     padding: 10px 14px;
     box-shadow: 0 18px 40px -22px rgba(10, 10, 11, 0.4);
     white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 180ms;
     display: flex;
     flex-direction: column;
     gap: 4px;
     min-width: 120px;
     text-align: center;
+    font-family: var(--font-body);
   }
-  .globe-pin__tip-title {
+  .globe-tip__title {
     font-family: var(--font-display);
     font-size: 13px;
     font-weight: 500;
     color: var(--text);
     letter-spacing: -0.01em;
   }
-  .globe-pin__tip-country {
-    font-family: var(--font-body);
+  .globe-tip__country {
     font-size: 11px;
     color: var(--text-muted);
     font-weight: 400;
   }
-  .globe-pin__tip-year {
-    font-family: var(--font-body);
+  .globe-tip__year {
     font-size: 9px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--text-soft);
     margin-top: 2px;
   }
-  .globe-pin__tip-year.is-upcoming {
+  .globe-tip__year.is-upcoming {
     color: #F97316;
     border: 1px solid #F97316;
     padding: 2px 8px 1px;
@@ -834,7 +819,14 @@
     align-self: center;
     font-weight: 500;
   }
-  .globe-pin:hover .globe-pin__tip { opacity: 1; }
+  .globe-tip__year.is-hometown {
+    color: #E8B547;
+    border: 1px solid #E8B547;
+    padding: 2px 8px 1px;
+    border-radius: 999px;
+    align-self: center;
+    font-weight: 500;
+  }
 
   .globe-controls {
     position: absolute;
@@ -991,20 +983,19 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: clamp(40px, 6vw, 80px);
-    align-items: center;
+    align-items: start;
   }
   @media (min-width: 900px) {
     .about { grid-template-columns: 1fr 1.2fr; }
   }
   .about__portrait {
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
     background: var(--border);
+    margin-top: 12px;
   }
   .about__portrait img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
   }
   .about__body p {
     color: var(--text-muted);
@@ -1059,7 +1050,7 @@
     z-index: -1;
   }
   .strip__inner {
-    padding: clamp(72px, 12vh, 140px) var(--gutter) 60px;
+    padding: clamp(120px, 18vh, 200px) var(--gutter) 60px;
     max-width: 720px;
   }
 
@@ -1087,6 +1078,19 @@
     margin-bottom: 10px;
   }
   .footer__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; font-size: 14px; }
+  .footer__list--social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .footer__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--text-soft);
+    transition: color var(--t-fast);
+  }
+  .footer__list--social a:hover .footer__icon { color: var(--text); }
   .footer__title {
     font-size: 11px;
     letter-spacing: 0.2em;
@@ -1252,7 +1256,6 @@
     .lead { font-size: 13px; line-height: 1.7; max-width: 340px; }
 
     /* ABOUT — tighter portrait + stats */
-    .about__portrait { aspect-ratio: 4 / 5; }
     .about__body { max-width: 100%; }
     .about__body p { font-size: 14px; line-height: 1.75; }
     .about__stats {
@@ -1349,7 +1352,7 @@
     <img class="hero__slide" src="images/hero-5.jpg" alt="South Africa scene" />
   </div>
   <div class="hero__content">
-    <p class="hero__eyebrow">Journey Stock</p>
+    <p class="hero__eyebrow">A quiet archive</p>
     <h1 class="hero__title">Miles fade,<br/>Moments <em>remain</em></h1>
     <p class="hero__sub">A quiet collection of places, distances, and moments worth remembering.</p>
     <div class="hero__actions">
@@ -1404,6 +1407,13 @@
       <button class="gallery-tab" data-filter="south-africa" role="tab">South Africa</button>
     </div>
 
+    <div class="gallery-toolbar reveal">
+      <button class="gallery-bw" data-bw type="button" aria-pressed="false" aria-label="Toggle black and white">
+        <span class="gallery-bw__swatch" aria-hidden="true"></span>
+        <span class="gallery-bw__label">B&amp;W</span>
+      </button>
+    </div>
+
     <div class="masonry" id="masonry">
       <!-- photos injected by JS -->
     </div>
@@ -1414,7 +1424,7 @@
       <span class="gallery-sets__sep" aria-hidden="true">/</span>
       <button class="gallery-set" data-set="B" role="tab" aria-selected="false">02</button>
       <span class="gallery-sets__divider" aria-hidden="true"></span>
-      <button class="gallery-bw" id="bwToggle" type="button" aria-pressed="false" aria-label="Toggle black and white">
+      <button class="gallery-bw" data-bw type="button" aria-pressed="false" aria-label="Toggle black and white">
         <span class="gallery-bw__swatch" aria-hidden="true"></span>
         <span class="gallery-bw__label">B&amp;W</span>
       </button>
@@ -1430,7 +1440,7 @@
   </div>
   <div class="strip__inner">
     <p class="hero__eyebrow">A note</p>
-    <h2 class="h1" style="color: #fff;">Every photo is a place<br/>I'd happily return to.</h2>
+    <h2 class="h1" style="color: #fff;">Some places hold you<br/>long after you leave.</h2>
   </div>
 </section>
 
@@ -1443,8 +1453,8 @@
              alt="Standing beneath the northern lights" loading="lazy" />
       </div>
       <div class="about__body">
-        <span class="eyebrow">About</span>
-        <h2 class="h1" style="margin: 12px 0 28px;">A Collector of <em>Moments</em></h2>
+        <span class="eyebrow" style="display: block; margin-top: -16px; margin-bottom: 14px;">About</span>
+        <h2 class="h1" style="margin: 0 0 28px;">A Collector of <em>Moments</em></h2>
         <p>Hi — I&rsquo;m someone who loves to travel and embrace whatever experiences the world leads me to.</p>
         <p>Most of my time is spent planning small trips, learning about different places, and quietly collecting moments along the way.</p>
         <p>What you&rsquo;ll find here are real moments. Some ordinary, some priceless — but all meaningful to me.</p>
@@ -1519,9 +1529,19 @@
       </div>
       <div>
         <div class="footer__title">Contact</div>
-        <ul class="footer__list">
-          <li><a href="mailto:icebcc164@gmail.com">icebcc164@gmail.com</a></li>
-          <li><a href="https://instagram.com/Netiwatice" target="_blank" rel="noopener">Instagram</a></li>
+        <ul class="footer__list footer__list--social">
+          <li><a href="mailto:icebcc164@gmail.com">
+            <svg class="footer__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            <span>icebcc164@gmail.com</span>
+          </a></li>
+          <li><a href="https://instagram.com/Netiwatice" target="_blank" rel="noopener">
+            <svg class="footer__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg>
+            <span>Netiwatice</span>
+          </a></li>
+          <li><a href="https://www.facebook.com/share/1E43k2wVrP/?mibextid=wwXIfr" target="_blank" rel="noopener">
+            <svg class="footer__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            <span>Netiwat Ice</span>
+          </a></li>
         </ul>
       </div>
     </div>
@@ -1693,6 +1713,7 @@ const TRIPS = [
 ];
 
 const CITIES = [
+  { name: 'Bangkok',        country: 'Thailand',     lat:  13.7563, lng: 100.5018, hometown: true },
   { name: 'Rome',           country: 'Italy',        lat:  41.9028, lng:  12.4964 },
   { name: 'Florence',       country: 'Italy',        lat:  43.7696, lng:  11.2558 },
   { name: 'Milan',          country: 'Italy',        lat:  45.4642, lng:   9.1900 },
@@ -2000,18 +2021,38 @@ document.getElementById('mapCount').textContent = countriesVisited;
 document.getElementById('statCountries').textContent = countriesVisited;
 
 /* ====================== 3D GLOBE ====================== */
-const GLOBE_TEX = {
-  light: 'https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg',
-  dark:  'https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg',
+// Monotone editorial palette: warm cream/tan for light, cool slate for dark.
+// Land vs sea are kept in the same tonal family but contrast clearly enough
+// to read the continents.
+const GLOBE_COLORS = {
+  // Light: softer medium gray palette
+  light: {
+    sea:        '#5C616B',
+    landCap:    '#8B9099',
+    landSide:   '#6F747D',
+    border:     'rgba(230, 232, 238, 0.28)',
+    atmosphere: '#9EA3AB',
+  },
+  // Dark: neutral charcoal grays
+  dark: {
+    sea:        '#2A2D33',
+    landCap:    '#52575F',
+    landSide:   '#3D4148',
+    border:     'rgba(220, 222, 228, 0.30)',
+    atmosphere: '#5A5E66',
+  },
 };
-const GLOBE_BUMP = 'https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png';
-// Emissive uses the texture itself as emissiveMap so the dark side keeps
-// its natural saturated colors instead of getting washed out by flat white.
-const GLOBE_EMISSIVE = {
-  light: { color: 0xffffff, intensity: 0.35 },
-  dark:  { color: 0xffffff, intensity: 0.55 },
-};
-const GLOBE_EXPOSURE = { light: 1.25, dark: 1.45 };
+const COUNTRIES_URL = 'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
+let countriesCache = null;
+async function loadCountries() {
+  if (countriesCache) return countriesCache;
+  try {
+    const r = await fetch(COUNTRIES_URL);
+    const j = await r.json();
+    countriesCache = j.features || [];
+  } catch (e) { countriesCache = []; }
+  return countriesCache;
+}
 
 const globeEl = document.getElementById('worldMap');
 let globe = null;
@@ -2063,65 +2104,60 @@ function buildPoints() {
     lng: c.lng,
     city: c.name,
     country: c.country,
-    years: formatYears(c.country),
+    hometown: !!c.hometown,
+    years: c.hometown ? '' : formatYears(c.country),
   }));
   return [...tripPoints, ...cityPoints];
 }
 
-function createPinEl(p) {
-  const el = document.createElement('div');
-  el.className = 'globe-pin ' + (p.kind === 'trip' ? 'globe-pin--trip' : 'globe-pin--city') + (p.upcoming ? ' globe-pin--upcoming' : '');
-  const size = p.kind === 'trip' ? 16 : 11;
-  const h = Math.round(size * 1.36);
-
-  const headline = p.city || p.country;
-  const subline  = p.city ? p.country : '';
-  const yearText = p.upcoming ? 'Upcoming' : p.years;
-
-  el.innerHTML = `
-    <svg viewBox="0 0 24 32" width="${size}" height="${h}" aria-hidden="true">
-      <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0zm0 16.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
-    </svg>
-    <span class="globe-pin__tip">
-      <span class="globe-pin__tip-title">${headline}</span>
-      ${subline ? `<span class="globe-pin__tip-country">${subline}</span>` : ''}
-      ${yearText ? `<span class="globe-pin__tip-year${p.upcoming ? ' is-upcoming' : ''}">${yearText}</span>` : ''}
-    </span>
-  `;
-  el.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (globe) globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.4 }, 900);
-  });
-  return el;
+function pointColorFor(p, isDark) {
+  if (p.hometown) return '#E8B547';   // warm gold for hometown
+  if (p.upcoming) return '#F97316';
+  if (p.kind === 'city') return isDark ? 'rgba(255,255,255,0.78)' : 'rgba(20,20,20,0.78)';
+  return isDark ? '#FFFFFF' : '#111111';
 }
 
-function applyGlobeBrightness(theme) {
+function tooltipHTML(p) {
+  const headline = p.city || p.country;
+  const subline  = p.city ? p.country : '';
+  let yearText, badgeMod = '';
+  if (p.hometown)       { yearText = 'Hometown'; badgeMod = ' is-hometown'; }
+  else if (p.upcoming)  { yearText = 'Upcoming'; badgeMod = ' is-upcoming'; }
+  else                  { yearText = p.years; }
+  return `
+    <div class="globe-tip">
+      <div class="globe-tip__title">${headline}</div>
+      ${subline ? `<div class="globe-tip__country">${subline}</div>` : ''}
+      ${yearText ? `<div class="globe-tip__year${badgeMod}">${yearText}</div>` : ''}
+    </div>
+  `;
+}
+
+// Paint the globe surface a flat sea color (no texture, no shading bands).
+// Trick: set diffuse color black + emissive to sea color at intensity 1 — the
+// surface effectively self-illuminates uniformly, giving a clean monotone look.
+function applyGlobeStyle(theme) {
   if (!globe) return;
-  const cfg = GLOBE_EMISSIVE[theme] || GLOBE_EMISSIVE.light;
-  const exp = GLOBE_EXPOSURE[theme] ?? 1.25;
+  const c = GLOBE_COLORS[theme] || GLOBE_COLORS.light;
   const mat = globe.globeMaterial();
-  if (mat && mat.emissive) {
-    mat.emissive.setHex(cfg.color);
-    mat.emissiveIntensity = cfg.intensity;
+  if (mat) {
+    mat.map = null;
+    mat.bumpMap = null;
+    if (mat.color)    mat.color.set('#000000');
+    if (mat.emissive) {
+      mat.emissive.set(c.sea);
+      mat.emissiveIntensity = 1;
+    }
+    mat.emissiveMap = null;
     mat.needsUpdate = true;
   }
-  // Boost overall color punch via renderer exposure
-  if (globe.rendererConfig) globe.rendererConfig({ toneMappingExposure: exp });
-
-  // Use the diffuse texture itself as emissive map so the shadowed
-  // hemisphere keeps its natural saturated colors (instead of plain white wash).
-  const wireEmissiveMap = () => {
-    if (!mat) return;
-    if (mat.map) {
-      if (mat.emissiveMap !== mat.map) {
-        mat.emissiveMap = mat.map;
-        mat.needsUpdate = true;
-      }
-    } else {
-      setTimeout(wireEmissiveMap, 200);
-    }
-  };
-  wireEmissiveMap();
+  if (globe.atmosphereColor) globe.atmosphereColor(c.atmosphere);
+  // Refresh polygon (land) colors if polygons are already loaded
+  if (globe.polygonsData && globe.polygonsData().length) {
+    globe.polygonCapColor(() => c.landCap)
+         .polygonSideColor(() => c.landSide)
+         .polygonStrokeColor(() => c.border);
+  }
 }
 
 function sizeGlobe() {
@@ -2134,26 +2170,72 @@ function initGlobe() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const points = buildPoints();
 
+  // Cursor-tracking tooltip — appended to <body> with position:fixed so
+  // it never gets clipped by section overflow or stacking context
+  const wrapEl = globeEl.parentElement;
+  const customTip = document.createElement('div');
+  customTip.className = 'globe-customtip';
+  document.body.appendChild(customTip);
+
+  const colors = GLOBE_COLORS[isDark ? 'dark' : 'light'];
   globe = Globe()
     .backgroundColor('rgba(0,0,0,0)')
-    .globeImageUrl(isDark ? GLOBE_TEX.dark : GLOBE_TEX.light)
-    .bumpImageUrl(GLOBE_BUMP)
     .showAtmosphere(true)
-    .atmosphereColor('#a8c5e8')
-    .atmosphereAltitude(0.22)
-    .htmlElementsData(points)
-    .htmlLat('lat')
-    .htmlLng('lng')
-    .htmlAltitude(p => p.kind === 'trip' ? 0.035 : 0.012)
-    .htmlElement(p => createPinEl(p))
-    .htmlElementVisibilityModifier((el, isVisible) => {
-      el.style.opacity = isVisible ? '' : '0';
-      el.style.pointerEvents = isVisible ? '' : 'none';
+    .atmosphereColor(colors.atmosphere)
+    .atmosphereAltitude(0.18)
+    .pointsData(points)
+    .pointLat('lat')
+    .pointLng('lng')
+    .pointAltitude(p => p.hometown ? 0.06 : p.kind === 'trip' ? 0.045 : 0.018)
+    .pointRadius(p => p.hometown ? 0.7 : p.kind === 'trip' ? 0.55 : 0.32)
+    .pointColor(p => pointColorFor(p, isDark))
+    .pointResolution(10)
+    .pointsMerge(false)
+    .onPointHover(p => {
+      if (p) {
+        customTip.innerHTML = tooltipHTML(p);
+        customTip.classList.add('is-visible');
+        positionTip();
+        wrapEl.style.cursor = 'pointer';
+      } else {
+        customTip.classList.remove('is-visible');
+        wrapEl.style.cursor = '';
+      }
+    })
+    .onPointClick(p => {
+      globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.4 }, 900);
     })
     (globeEl);
 
-  // Boost surface brightness so the texture pops
-  applyGlobeBrightness(isDark ? 'dark' : 'light');
+  // Track cursor in viewport coords (matches position:fixed tooltip)
+  let lastMouseX = 0, lastMouseY = 0;
+  function positionTip() {
+    customTip.style.left = lastMouseX + 'px';
+    customTip.style.top  = (lastMouseY - 14) + 'px';
+  }
+  wrapEl.addEventListener('mousemove', (e) => {
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+    if (customTip.classList.contains('is-visible')) positionTip();
+  });
+  wrapEl.addEventListener('mouseleave', () => {
+    customTip.classList.remove('is-visible');
+    wrapEl.style.cursor = '';
+  });
+
+  // Paint sea color (replaces the texture)
+  applyGlobeStyle(isDark ? 'dark' : 'light');
+
+  // Lay continents on top as polygons for a clean monotone map look
+  loadCountries().then(features => {
+    if (!globe || !features.length) return;
+    const cc = GLOBE_COLORS[document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'];
+    globe.polygonsData(features)
+         .polygonAltitude(0.018)
+         .polygonCapColor(() => cc.landCap)
+         .polygonSideColor(() => cc.landSide)
+         .polygonStrokeColor(() => cc.border);
+  });
 
   // Index trip points so timeline → globe still works
   points.forEach(p => { if (p.kind === 'trip') tripPointIndex[p.tripIndex] = p; });
@@ -2193,9 +2275,8 @@ function initGlobe() {
 function setGlobeTheme(theme) {
   if (!globe) return;
   const isDark = theme === 'dark';
-  globe.globeImageUrl(isDark ? GLOBE_TEX.dark : GLOBE_TEX.light)
-       .atmosphereColor('#a8c5e8');
-  applyGlobeBrightness(theme);
+  globe.pointColor(p => pointColorFor(p, isDark));
+  applyGlobeStyle(theme);
 }
 
 // Initialize once the deferred globe.gl script is ready
@@ -2308,22 +2389,24 @@ themeToggle.addEventListener('click', () => {
 });
 
 /* ====================== GALLERY B&W TOGGLE ====================== */
-const bwToggle = document.getElementById('bwToggle');
+const bwToggles = document.querySelectorAll('[data-bw]');
 const BW_KEY = 'momentmiler:bw';
 
 function applyBW(on) {
   masonry.classList.toggle('is-bw', on);
-  bwToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  bwToggles.forEach(btn => btn.setAttribute('aria-pressed', on ? 'true' : 'false'));
 }
 
 try {
   applyBW(localStorage.getItem(BW_KEY) === '1');
 } catch (e) {}
 
-bwToggle.addEventListener('click', () => {
-  const next = bwToggle.getAttribute('aria-pressed') !== 'true';
-  applyBW(next);
-  try { localStorage.setItem(BW_KEY, next ? '1' : '0'); } catch (e) {}
+bwToggles.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const next = btn.getAttribute('aria-pressed') !== 'true';
+    applyBW(next);
+    try { localStorage.setItem(BW_KEY, next ? '1' : '0'); } catch (e) {}
+  });
 });
 </script>
 
