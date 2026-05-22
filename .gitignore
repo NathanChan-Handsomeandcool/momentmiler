@@ -18,3 +18,7 @@ _*.ps1
 
 # Logs
 *.log
+
+# Raw photo inbox — drop files here, the add-photos script processes them
+images/_inbox/*/*
+!images/_inbox/*/.gitkeep
