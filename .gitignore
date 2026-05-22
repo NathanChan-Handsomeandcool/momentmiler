@@ -22,3 +22,10 @@ _*.ps1
 # Raw photo inbox — drop files here, the add-photos script processes them
 images/_inbox/*/*
 !images/_inbox/*/.gitkeep
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
